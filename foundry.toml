@@ -1,0 +1,31 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+remappings = [
+  # "@openzeppelin/=lib/openzeppelin-contracts/"
+
+
+    "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/"
+]
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
+# Avalanche Fuji testnet configuration
+[profile.fuji]
+rpc_url = "https://api.avax-test.network/ext/bc/C/rpc"
+chain_id = 43113
+
+etherscan_api_key = "${SNOWTRACE_API_KEY}"
+
+# Local development
+[profile.local]
+rpc_url = "http://127.0.0.1:8545"
+chain_id = 31337
+
+# Gas settings for Avalanche
+gas_limit = 8000000
+gas_price = 25000000000  # 25 gwei
+
+[fmt]
+line_length = 120
+tab_width = 4
+bracket_spacing = true

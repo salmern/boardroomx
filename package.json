@@ -1,0 +1,7 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "hardhat": "^2.26.3",
+    "hardhat-circom": "^3.3.2"
+  }
+}
