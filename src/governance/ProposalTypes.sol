@@ -14,7 +14,6 @@ library ProposalTypes {
 
     }
 
-
     enum VoteType {
         Against, // Vote against the proposal
         For, // Vote for the proposal

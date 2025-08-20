@@ -6,7 +6,7 @@ import { GovToken } from "src/GovToken.sol";
 import { GovernorZK } from "src/governance/GovernorZK.sol";
 import { ProposalTypes } from "src/governance/ProposalTypes.sol";
 import { BoardManagement } from "src/utils/BoardManagement.sol";
-import { IGovernor } from "openzeppelin-contracts/governance/IGovernor.sol"; 
+import { IGovernor } from "openzeppelin-contracts/governance/IGovernor.sol";
 
 contract GovernorZKTest is Test {
     GovernorZK governor;
@@ -93,7 +93,6 @@ contract GovernorZKTest is Test {
         bytes memory proposalData =
             abi.encode(ProposalTypes.ProposalType.GENERAL, "Test Proposal", "ipfs://QmTest", actions, budget);
 
-      
         governor.propose(proposalId, "A test proposal for unit testing", proposalData);
     }
 
