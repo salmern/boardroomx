@@ -9,20 +9,20 @@ contract BoardManagement is IBoardManagement {
     mapping(address => bool) private _boardMembers;
     address[] private _boardMembersList;
     address public chairman;
-    
+
     uint256 public constant MAX_BOARD_SIZE = 15;
     uint256 public constant MIN_BOARD_SIZE = 3;
-    
+
     modifier onlyChairman() {
         require(msg.sender == chairman, "Only chairman can perform this action");
         _;
     }
-    
+
     modifier onlyBoardMember() {
         require(_boardMembers[msg.sender], "Only board members can perform this action");
         _;
     }
-    
+
     modifier validBoardSize() {
         require(_boardMembersList.length >= MIN_BOARD_SIZE, "Board too small");
         require(_boardMembersList.length <= MAX_BOARD_SIZE, "Board too large");
@@ -33,17 +33,17 @@ contract BoardManagement is IBoardManagement {
         require(_chairman != address(0), "Invalid chairman address");
         require(initialMembers.length + 1 >= MIN_BOARD_SIZE, "Need minimum board members");
         require(initialMembers.length + 1 <= MAX_BOARD_SIZE, "Too many initial members");
-        
+
         chairman = _chairman;
         _boardMembers[_chairman] = true;
         _boardMembersList.push(_chairman);
-        
+
         for (uint256 i = 0; i < initialMembers.length; i++) {
             if (initialMembers[i] != _chairman && initialMembers[i] != address(0)) {
                 _addBoardMemberInternal(initialMembers[i]);
             }
         }
-        
+
         emit BoardMemberAdded(_chairman, block.timestamp);
     }
 
@@ -51,7 +51,7 @@ contract BoardManagement is IBoardManagement {
         require(member != address(0), "Invalid member address");
         require(!_boardMembers[member], "Already a board member");
         require(_boardMembersList.length < MAX_BOARD_SIZE, "Board at maximum size");
-        
+
         _addBoardMemberInternal(member);
         emit BoardMemberAdded(member, block.timestamp);
     }
@@ -61,7 +61,7 @@ contract BoardManagement is IBoardManagement {
         require(_boardMembers[member], "Not a board member");
         require(member != chairman, "Cannot remove chairman");
         require(_boardMembersList.length > MIN_BOARD_SIZE, "Cannot go below minimum size");
-        
+
         _removeBoardMemberInternal(member);
         emit BoardMemberRemoved(member, block.timestamp);
     }
@@ -70,10 +70,10 @@ contract BoardManagement is IBoardManagement {
         require(newChairman != address(0), "Invalid chairman address");
         require(_boardMembers[newChairman], "New chairman must be board member");
         require(newChairman != chairman, "Already chairman");
-        
+
         address oldChairman = chairman;
         chairman = newChairman;
-        
+
         emit BoardMembershipTransferred(oldChairman, newChairman);
     }
 
@@ -101,7 +101,7 @@ contract BoardManagement is IBoardManagement {
 
     function _removeBoardMemberInternal(address member) internal {
         _boardMembers[member] = false;
-        
+
         // Remove from array
         for (uint256 i = 0; i < _boardMembersList.length; i++) {
             if (_boardMembersList[i] == member) {
@@ -119,12 +119,8 @@ contract BoardManagement is IBoardManagement {
         return keccak256(abi.encodePacked(_boardMembersList));
     }
 
-    function verifyBoardMembership(address member, bytes32[] memory /* proof */) 
-        external 
-        view 
-        returns (bool) 
-    {
-        // Simplified verification - in production, use Merkle tree verification
+    function verifyBoardMembership(address member, bytes32[] memory /* proof */ ) external view returns (bool) {
+        // Simplified verification - in production, we will use Merkle tree verification maybe
         return _boardMembers[member];
     }
 }
