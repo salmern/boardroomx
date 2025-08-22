@@ -2,26 +2,25 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
-import {GovToken} from "src/GovToken.sol";
-import {EncryptedERC} from "@encrypted-erc/EncryptedERC.sol";
-import {Registrar} from "@encrypted-erc/Registrar.sol";
-import {RegistrationCircuitGroth16Verifier} from "@encrypted-erc/verifiers/RegistrationCircuitGroth16Verifier.sol";
-import {MintCircuitGroth16Verifier} from "@encrypted-erc/verifiers/MintCircuitGroth16Verifier.sol";
-import {WithdrawCircuitGroth16Verifier} from "@encrypted-erc/verifiers/WithdrawCircuitGroth16Verifier.sol";
-import {TransferCircuitGroth16Verifier} from "@encrypted-erc/verifiers/TransferCircuitGroth16Verifier.sol";
-import {BurnCircuitGroth16Verifier} from "@encrypted-erc/verifiers/BurnCircuitGroth16Verifier.sol";
-import {CreateEncryptedERCParams, RegisterProof, ProofPoints} from "@encrypted-erc/types/Types.sol";
+import { GovToken } from "src/GovToken.sol";
+import { EncryptedERC } from "@encrypted-erc/EncryptedERC.sol";
+import { Registrar } from "@encrypted-erc/Registrar.sol";
+import { RegistrationCircuitGroth16Verifier } from "@encrypted-erc/verifiers/RegistrationCircuitGroth16Verifier.sol";
+import { MintCircuitGroth16Verifier } from "@encrypted-erc/verifiers/MintCircuitGroth16Verifier.sol";
+import { WithdrawCircuitGroth16Verifier } from "@encrypted-erc/verifiers/WithdrawCircuitGroth16Verifier.sol";
+import { TransferCircuitGroth16Verifier } from "@encrypted-erc/verifiers/TransferCircuitGroth16Verifier.sol";
+import { BurnCircuitGroth16Verifier } from "@encrypted-erc/verifiers/BurnCircuitGroth16Verifier.sol";
+import { CreateEncryptedERCParams, RegisterProof, ProofPoints } from "@encrypted-erc/types/Types.sol";
 
 contract GovTokenPrivacyTest is Test {
     GovToken govToken;
     EncryptedERC eERC;
     Registrar registrar;
     address user = makeAddr("auditor");
-    
+
     address auditor = address(0x59c2C8Aa563d835F698543D6226c9c01ACf3a866);
 
     function setUp() external {
-          
         // Deploy verifiers
         RegistrationCircuitGroth16Verifier registrationVerifier = new RegistrationCircuitGroth16Verifier();
         MintCircuitGroth16Verifier mintVerifier = new MintCircuitGroth16Verifier();
@@ -32,7 +31,7 @@ contract GovTokenPrivacyTest is Test {
         // Deploy Registrar
         registrar = new Registrar(address(registrationVerifier));
 
-        // Register auditor with REAL proof 
+        // Register auditor with REAL proof
         uint256[2] memory b0 = [
             uint256(0x10aa3917add01099ef76b9ed45efc7ed92690fc2f737c27032f14da5e5288646),
             uint256(0x0e7e478fb1f516fa0cef02d7aab4c159a951da17de6811dc9b17fbd383317ceb)
@@ -61,7 +60,7 @@ contract GovTokenPrivacyTest is Test {
                 uint256(0x293f208ab4eaddd94d66253b9f862547f589b3fac3bc613b22bd65e65aa60b6a)
             ]
         });
-        
+
         // Used prank to simulate the auditor calling register
         vm.prank(auditor);
         registrar.register(proof);

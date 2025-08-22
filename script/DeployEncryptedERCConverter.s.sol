@@ -2,15 +2,15 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import {BurnCircuitGroth16Verifier} from "@encrypted-erc/verifiers/BurnCircuitGroth16Verifier.sol";
-import {MintCircuitGroth16Verifier} from "@encrypted-erc/verifiers/MintCircuitGroth16Verifier.sol";
-import {RegistrationCircuitGroth16Verifier} from "@encrypted-erc/verifiers/RegistrationCircuitGroth16Verifier.sol";
-import {TransferCircuitGroth16Verifier} from "@encrypted-erc/verifiers/TransferCircuitGroth16Verifier.sol";
-import {WithdrawCircuitGroth16Verifier} from "@encrypted-erc/verifiers/WithdrawCircuitGroth16Verifier.sol";
-import {Registrar} from "@encrypted-erc/Registrar.sol";
-import {EncryptedERC} from "@encrypted-erc/EncryptedERC.sol";
-import {CreateEncryptedERCParams, RegisterProof, ProofPoints} from "@encrypted-erc/types/Types.sol";
-import {GovToken} from "src/GovToken.sol";
+import { BurnCircuitGroth16Verifier } from "@encrypted-erc/verifiers/BurnCircuitGroth16Verifier.sol";
+import { MintCircuitGroth16Verifier } from "@encrypted-erc/verifiers/MintCircuitGroth16Verifier.sol";
+import { RegistrationCircuitGroth16Verifier } from "@encrypted-erc/verifiers/RegistrationCircuitGroth16Verifier.sol";
+import { TransferCircuitGroth16Verifier } from "@encrypted-erc/verifiers/TransferCircuitGroth16Verifier.sol";
+import { WithdrawCircuitGroth16Verifier } from "@encrypted-erc/verifiers/WithdrawCircuitGroth16Verifier.sol";
+import { Registrar } from "@encrypted-erc/Registrar.sol";
+import { EncryptedERC } from "@encrypted-erc/EncryptedERC.sol";
+import { CreateEncryptedERCParams, RegisterProof, ProofPoints } from "@encrypted-erc/types/Types.sol";
+import { GovToken } from "src/GovToken.sol";
 
 contract DeployEncryptedERCConverter is Script {
     function run() external {
@@ -31,10 +31,7 @@ contract DeployEncryptedERCConverter is Script {
         BurnCircuitGroth16Verifier burnVerifier = new BurnCircuitGroth16Verifier();
 
         // Log verifier addresses
-        console.log(
-            "RegistrationVerifier deployed at:",
-            address(registrationVerifier)
-        );
+        console.log("RegistrationVerifier deployed at:", address(registrationVerifier));
         console.log("MintVerifier deployed at:", address(mintVerifier));
         console.log("WithdrawVerifier deployed at:", address(withdrawVerifier));
         console.log("TransferVerifier deployed at:", address(transferVerifier));
@@ -43,7 +40,7 @@ contract DeployEncryptedERCConverter is Script {
         // Deploy Registrar
         Registrar registrar = new Registrar(address(registrationVerifier));
 
-        // Register auditor with REAL proof 
+        // Register auditor with REAL proof
         uint256[2] memory b0 = [
             uint256(0x10aa3917add01099ef76b9ed45efc7ed92690fc2f737c27032f14da5e5288646),
             uint256(0x0e7e478fb1f516fa0cef02d7aab4c159a951da17de6811dc9b17fbd383317ceb)
@@ -73,7 +70,7 @@ contract DeployEncryptedERCConverter is Script {
             ]
         });
         vm.stopBroadcast();
-        
+
         vm.startBroadcast(auditorPrivateKey);
         // Add this before the register call
         console.log("Auditor address from env:", auditor);
@@ -82,10 +79,10 @@ contract DeployEncryptedERCConverter is Script {
         console.log("About to register with proof");
         console.log("Auditor address:", auditor);
         console.log("Transaction sender:", vm.addr(auditorPrivateKey));
-        
+
         registrar.register(proof);
         vm.stopBroadcast();
-        
+
         vm.startBroadcast(deployerPrivateKey);
 
         // Deploy EncryptedERC

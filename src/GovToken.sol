@@ -4,10 +4,14 @@ pragma solidity ^0.8.27;
 import "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-contracts/token/ERC20/extensions/ERC20Permit.sol";
 import "openzeppelin-contracts/token/ERC20/extensions/ERC20Votes.sol";
-import "openzeppelin-contracts/access/Ownable.sol";  // Add this
+import "openzeppelin-contracts/access/Ownable.sol"; // Add this
 
 contract GovToken is ERC20, ERC20Permit, ERC20Votes, Ownable {
-    constructor() ERC20("Boardroom Governance Token", "BGT") ERC20Permit("Boardroom Governance Token") Ownable(msg.sender) {
+    constructor()
+        ERC20("Boardroom Governance Token", "BGT")
+        ERC20Permit("Boardroom Governance Token")
+        Ownable(msg.sender)
+    {
         _mint(msg.sender, 1_000_000 ether);
     }
 
