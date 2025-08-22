@@ -1,3 +1,2 @@
 src/=src/
   @encrypted-erc/=lib/encrypted-erc/contracts/
-  @openzeppelin/=lib/openzeppelin-contracts/
