@@ -1,0 +1,6 @@
+﻿Milestone,Description,Timeline,Dependencies,Status
+Milestone 1,MVP Prototype: Deployed GovToken", "EncryptedERC" (converter mode), "Registrar", and verifiers on Fuji testnet. Includes auditor registration with real proof and encrypted deposits. 20+ passing tests.","Completed by Aug 23, 2025","Foundry, EncryptedERC, Fuji testnet",✅ Done
+Milestone 2,ZK Governance: Deploy GovernorZK with ZK voting and encrypted budget proposals using EncryptedERC (converter mode). Mock ZK proofs for voting eligibility.,"Aug 25–Sep 1, 2025","Milestone 1, Circom, snarkjs",🟡 In Progress
+Milestone 3,Full ZK Integration: Custom Circom circuit for anonymous voting. Client-side proof generation for voting/transfers.,"Sep 1–7, 2025",EncryptedERC SDK,⚪ Planned
+Milestone 4,dApp Frontend: React dApp for private proposals/voting and balance decryption.,"Sep 7–14, 2025",ethers.js,⚪ Planned
+Milestone 5,"Audit & Mainnet: Security audit, beta tests, C-Chain deployment, DAO onboarding.",Post-hackathon (Sep 2025 onward),Funding,⚪ Planned
