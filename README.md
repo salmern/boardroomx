@@ -86,7 +86,7 @@ The following TypeScript files demonstrate client-side proof generation for eERC
 These scripts were used to generate the real proof for auditor `0x59c2C8Aa563d835F698543D6226c9c01ACf3a866` on Avalanche Fuji testnet.
 registerProof.ts
 
-```
+
 import { ethers, zkit } from "hardhat";
 import { poseidon } from "maci-crypto/build/ts/hashing";
 import { getAddress } from "ethers";
@@ -136,8 +136,7 @@ export const generateRegistrationProof = async (
   }
 };
  runRegisterProof.ts
-```
-```
+
 import { generateRegistrationProof } from "./registerProof";
 import { mulPointEscalar, inCurve, Base8 } from "@zk-kit/baby-jubjub";
 import { ethers, getAddress } from "ethers";
@@ -184,7 +183,6 @@ const proof = await generateRegistrationProof(normalizedAddress, privateKey, pub
 
 main().catch(console.error);
 
-```
 
 
 
