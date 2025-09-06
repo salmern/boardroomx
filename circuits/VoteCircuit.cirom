@@ -1,0 +1,34 @@
+// circuits/VoteCircuit.circom
+pragma circom 2.1.9;
+
+include "node_modules/circomlib/circuits/bitify.circom";
+include "node_modules/circomlib/circuits/eddsaposeidon.circom";
+
+template VoteCircuit() {
+    signal input boardMemberPrivateKey;
+    signal input proposalId;
+    signal input hasVotedNullifier; // Prevent double-voting
+
+    // Public inputs
+    signal output proposalIdOut;
+    signal output nullifierHash;
+
+    component bitify = Num2Bits(254);
+    bitify.in <== boardMemberPrivateKey;
+    for (var i = 0; i < 254; i++) {
+        assert(boardMemberPrivateKey !== 0); // Just to use bits
+    }
+
+    // Hash: Poseidon(proposalId, boardMemberPrivateKey)
+    component hash = MultiPoseidon(2);
+    hash.inputs[0] <== proposalId;
+    hash.inputs[1] <== boardMemberPrivateKey;
+
+    proposalIdOut <== proposalId;
+    nullifierHash <== hash.out;
+
+    // Assert: user hasn't voted (via nullifier)
+    // This is checked on-chain, not in circuit
+}
+
+component main { public [ proposalId, hasVotedNullifier ] } = VoteCircuit();

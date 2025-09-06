@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 /// @title ProposalTypes - Defines different types of corporate proposals
 library ProposalTypes {
     enum ProposalType {
+        STADARD,
         GENERAL, // General board resolutions
         BUDGET, // Budget approvals with encryption
         EXECUTIVE_HIRE, // C-level executive hiring

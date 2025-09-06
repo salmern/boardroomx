@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "../interfaces/IGovernanceCore.sol";
 
+
 /// @title BoardManagement - Manages corporate board membership
 /// @notice Handles adding/removing board members and access control
 contract BoardManagement is IBoardManagement {
@@ -12,6 +13,8 @@ contract BoardManagement is IBoardManagement {
 
     uint256 public constant MAX_BOARD_SIZE = 15;
     uint256 public constant MIN_BOARD_SIZE = 3;
+
+    
 
     modifier onlyChairman() {
         require(msg.sender == chairman, "Only chairman can perform this action");
@@ -30,21 +33,33 @@ contract BoardManagement is IBoardManagement {
     }
 
     constructor(address[] memory initialMembers, address _chairman) {
-        require(_chairman != address(0), "Invalid chairman address");
-        require(initialMembers.length + 1 >= MIN_BOARD_SIZE, "Need minimum board members");
-        require(initialMembers.length + 1 <= MAX_BOARD_SIZE, "Too many initial members");
-
-        chairman = _chairman;
-        _boardMembers[_chairman] = true;
-        _boardMembersList.push(_chairman);
-
-        for (uint256 i = 0; i < initialMembers.length; i++) {
-            if (initialMembers[i] != _chairman && initialMembers[i] != address(0)) {
-                _addBoardMemberInternal(initialMembers[i]);
-            }
+         if (_chairman == address(0)) {
+            revert("Invalid chairman address");
+        }
+        if (_boardMembers[_chairman]) {
+            revert("Chairman already added");
         }
 
+        // Add chairman
+        _boardMembersList.push(_chairman);
+        _boardMembers[_chairman] = true;
+        chairman = _chairman;
         emit BoardMemberAdded(_chairman, block.timestamp);
+
+        // Add initial members
+        for (uint256 i = 0; i < initialMembers.length; i++) {
+            address member = initialMembers[i];
+            if (member == address(0)) {
+                revert("Invalid member address");
+            }
+            if (_boardMembers[member]) {
+                revert("Duplicate board member");
+            }
+
+            _boardMembersList.push(member);
+            _boardMembers[member] = true;
+            emit BoardMemberAdded(member, block.timestamp);
+        }
     }
 
     function addBoardMember(address member) external override onlyChairman {
@@ -75,7 +90,14 @@ contract BoardManagement is IBoardManagement {
         chairman = newChairman;
 
         emit BoardMembershipTransferred(oldChairman, newChairman);
+
+        //  remove old chairman or keep as normal member
+        // i will Uncomment if i want to auto-remove old chairman:
+        // _removeBoardMemberInternal(oldChairman);
+        // emit BoardMemberRemoved(oldChairman, block.timestamp);
     }
+
+    
 
     function isBoardMember(address account) external view override returns (bool) {
         return _boardMembers[account];
@@ -113,14 +135,10 @@ contract BoardManagement is IBoardManagement {
     }
 
     // View functions for governance integration
-    function getBoardMemberRoot() external view returns (bytes32) {
-        // This will be used for zkSNARK membership proofs
-        // For now, return a simple hash of all board members
-        return keccak256(abi.encodePacked(_boardMembersList));
-    }
+    // function getBoardMemberRoot() external view returns (bytes32) {
+    //     // This will be used for zkSNARK membership proofs
+    //     // For now, return a simple hash of all board members
+    //     return keccak256(abi.encodePacked(_boardMembersList));
+    // }
 
-    function verifyBoardMembership(address member, bytes32[] memory /* proof */ ) external view returns (bool) {
-        // Simplified verification - in production, we will use Merkle tree verification maybe
-        return _boardMembers[member];
-    }
 }

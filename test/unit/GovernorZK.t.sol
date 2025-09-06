@@ -50,7 +50,7 @@ contract GovernorZKTest is Test {
 
         uint256 initialSupply = 1000 ether;
 
-        // Use Forge cheatcode to give token balances
+        // Using Forge cheatcode to give token balances
         deal(address(govToken), chairman, initialSupply);
         deal(address(govToken), member1, initialSupply);
         deal(address(govToken), member2, initialSupply);

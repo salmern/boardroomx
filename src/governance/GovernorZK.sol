@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
 import "../interfaces/IGovernanceCore.sol";
 import "../utils/BoardManagement.sol";
@@ -117,49 +117,78 @@ contract GovernorZK is IGovernor {
         return proposalId;
     }
 
-    /// @notice Cast a vote on a proposal (basic version, will add zkSNARK later)
-    function castVote(bytes32 proposalId, uint8 support)
-        external
-        override
-        onlyBoardMember
-        validProposal(proposalId)
-        returns (uint256)
-    {
-        ProposalTypes.ProposalCore storage proposal = proposals[proposalId];
-        require(block.timestamp >= proposal.startTime, "Voting not started");
-        require(block.timestamp <= proposal.endTime, "Voting ended");
-        require(!hasVoted[proposalId][msg.sender], "Already voted");
-        require(support <= 2, "Invalid vote type");
 
-        // For now, each board member has equal weight (1 vote)
-        // Later this will be based on encrypted token balance
-        uint256 weight = 1;
+function castVote(bytes32 proposalId, uint8 support)
+    external
+    override
+    onlyBoardMember
+    validProposal(proposalId)
+    returns (uint256)
+{
+    ProposalTypes.ProposalCore storage proposal = proposals[proposalId];
+    require(block.timestamp >= proposal.startTime, "Voting not started");
+    require(block.timestamp <= proposal.endTime, "Voting ended");
+    require(!hasVoted[proposalId][msg.sender], "Already voted");
+    require(support <= 2, "Invalid vote type");
 
-        hasVoted[proposalId][msg.sender] = true;
+    uint256 weight = 1;
 
-        ProposalTypes.VotingResults storage results = votingResults[proposalId];
+    hasVoted[proposalId][msg.sender] = true;
 
-        if (support == uint8(ProposalTypes.VoteType.For)) {
-            results.forVotes += weight;
-        } else if (support == uint8(ProposalTypes.VoteType.Against)) {
-            results.againstVotes += weight;
-        } else {
-            results.abstainVotes += weight;
-        }
-
-        results.totalVotes += weight;
-
-        emit VoteCast(msg.sender, proposalId, support, weight, "");
-        emit ProposalTypes.VoteCast(
-            proposalId,
-            msg.sender,
-            ProposalTypes.VoteType(support),
-            weight,
-            bytes32(0) // No nullifier yet
-        );
-
-        return weight;
+    ProposalTypes.VotingResults storage results = votingResults[proposalId];
+    if (support == uint8(ProposalTypes.VoteType.For)) {
+        results.forVotes += weight;
+    } else if (support == uint8(ProposalTypes.VoteType.Against)) {
+        results.againstVotes += weight;
+    } else {
+        results.abstainVotes += weight;
     }
+
+    results.totalVotes += weight;
+
+    emit VoteCast(msg.sender, proposalId, support, weight, "");
+    emit ProposalTypes.VoteCast(proposalId, msg.sender, ProposalTypes.VoteType(support), weight, bytes32(0));
+
+    return weight;
+}
+
+// GovernorZK.sol
+// function castVoteAnonymously(
+//     bytes32 proposalId,
+//     uint8 support,
+//     uint256[8] calldata publicSignals,
+//     uint256[2] calldata a,
+//     uint256[2][2] calldata b,
+//     uint256[2] calldata c
+// ) external validProposal(proposalId) {
+//     require(block.timestamp >= proposals[proposalId].startTime, "Voting not started");
+//     require(block.timestamp <= proposals[proposalId].endTime, "Voting ended");
+//     require(support <= 2, "Invalid vote type");
+
+//     // Extract nullifier from publicSignals[3] (or wherever it is)
+//     uint256 nullifier = publicSignals[3];
+//     require(!usedNullifiers[nullifier], "Already voted");
+//     usedNullifiers[nullifier] = true;
+
+//     // Verify the proof using the same verifier as deposit
+//     bool isValid = zkVerifier.verify(a, b, c, publicSignals);
+//     require(isValid, "Invalid ZK proof");
+
+//     // Use amount as voting weight
+//     uint256 votingPower = publicSignals[0]; // ValueToMint
+
+//     ProposalTypes.VotingResults storage results = votingResults[proposalId];
+//     if (support == uint8(ProposalTypes.VoteType.For)) {
+//         results.forVotes += votingPower;
+//     } else if (support == uint8(ProposalTypes.VoteType.Against)) {
+//         results.againstVotes += votingPower;
+//     } else {
+//         results.abstainVotes += votingPower;
+//     }
+//     results.totalVotes += votingPower;
+
+//     emit ProposalTypes.VoteCast(proposalId, msg.sender, ProposalTypes.VoteType(support), votingPower, bytes32(nullifier));
+// }
 
     /// @notice Execute a successful proposal
     function execute(bytes32 proposalId) external override validProposal(proposalId) {
@@ -181,6 +210,42 @@ contract GovernorZK is IGovernor {
 
         emit ProposalExecuted(proposalId);
         // emit ProposalTypes.ProposalStateChanged(proposalId, ProposalTypes.ProposalState.Executed, block.timestamp);
+    }
+
+    /// @notice Cancel a proposal (only by proposer or chairman)
+    function cancel(bytes32 proposalId) external validProposal(proposalId) {
+        ProposalTypes.ProposalCore storage proposal = proposals[proposalId];
+        require(msg.sender == proposal.proposer || boardManagement.isChairman(msg.sender), "Not authorized to cancel");
+        require(!proposal.executed, "Cannot cancel executed proposal");
+
+        proposal.canceled = true;
+    }
+
+    // Utility functions
+    function getProposalDetails(bytes32 proposalId)
+        external
+        view
+        returns (ProposalTypes.ProposalCore memory proposal, ProposalTypes.VotingResults memory results)
+    {
+        return (proposals[proposalId], votingResults[proposalId]);
+    }
+
+    function getProposalActions(bytes32 proposalId) external view returns (ProposalTypes.ProposalActions memory) {
+        return proposalActions[proposalId];
+    }
+
+    function getEncryptedBudget(bytes32 proposalId) external view returns (ProposalTypes.EncryptedBudget memory) {
+        return encryptedBudgets[proposalId];
+    }
+
+    // For future zkSNARK integration
+    function setZKVerifier(address verifier) external {
+        require(boardManagement.isChairman(msg.sender), "Only chairman can set verifier");
+        zkVerifier = IVerifier(verifier);
+    }
+
+    function getBoardVotingPower() external view returns (uint256) {
+        return boardManagement.getBoardSize();
     }
 
     /// @notice Get the current state of a proposal
@@ -231,42 +296,6 @@ contract GovernorZK is IGovernor {
         }
 
         return IGovernor.ProposalState.Defeated;
-    }
-
-    /// @notice Cancel a proposal (only by proposer or chairman)
-    function cancel(bytes32 proposalId) external validProposal(proposalId) {
-        ProposalTypes.ProposalCore storage proposal = proposals[proposalId];
-        require(msg.sender == proposal.proposer || boardManagement.isChairman(msg.sender), "Not authorized to cancel");
-        require(!proposal.executed, "Cannot cancel executed proposal");
-
-        proposal.canceled = true;
-    }
-
-    // Utility functions
-    function getProposalDetails(bytes32 proposalId)
-        external
-        view
-        returns (ProposalTypes.ProposalCore memory proposal, ProposalTypes.VotingResults memory results)
-    {
-        return (proposals[proposalId], votingResults[proposalId]);
-    }
-
-    function getProposalActions(bytes32 proposalId) external view returns (ProposalTypes.ProposalActions memory) {
-        return proposalActions[proposalId];
-    }
-
-    function getEncryptedBudget(bytes32 proposalId) external view returns (ProposalTypes.EncryptedBudget memory) {
-        return encryptedBudgets[proposalId];
-    }
-
-    function getBoardVotingPower() external view returns (uint256) {
-        return boardManagement.getBoardSize();
-    }
-
-    // For future zkSNARK integration
-    function setZKVerifier(address _verifier) external {
-        require(boardManagement.isChairman(msg.sender), "Only chairman can set verifier");
-        zkVerifier = IVerifier(_verifier);
     }
 
     // Budget decryption (for approved budget proposals)
