@@ -117,78 +117,77 @@ contract GovernorZK is IGovernor {
         return proposalId;
     }
 
+    function castVote(bytes32 proposalId, uint8 support)
+        external
+        override
+        onlyBoardMember
+        validProposal(proposalId)
+        returns (uint256)
+    {
+        ProposalTypes.ProposalCore storage proposal = proposals[proposalId];
+        require(block.timestamp >= proposal.startTime, "Voting not started");
+        require(block.timestamp <= proposal.endTime, "Voting ended");
+        require(!hasVoted[proposalId][msg.sender], "Already voted");
+        require(support <= 2, "Invalid vote type");
 
-function castVote(bytes32 proposalId, uint8 support)
-    external
-    override
-    onlyBoardMember
-    validProposal(proposalId)
-    returns (uint256)
-{
-    ProposalTypes.ProposalCore storage proposal = proposals[proposalId];
-    require(block.timestamp >= proposal.startTime, "Voting not started");
-    require(block.timestamp <= proposal.endTime, "Voting ended");
-    require(!hasVoted[proposalId][msg.sender], "Already voted");
-    require(support <= 2, "Invalid vote type");
+        uint256 weight = 1;
 
-    uint256 weight = 1;
+        hasVoted[proposalId][msg.sender] = true;
 
-    hasVoted[proposalId][msg.sender] = true;
+        ProposalTypes.VotingResults storage results = votingResults[proposalId];
+        if (support == uint8(ProposalTypes.VoteType.For)) {
+            results.forVotes += weight;
+        } else if (support == uint8(ProposalTypes.VoteType.Against)) {
+            results.againstVotes += weight;
+        } else {
+            results.abstainVotes += weight;
+        }
 
-    ProposalTypes.VotingResults storage results = votingResults[proposalId];
-    if (support == uint8(ProposalTypes.VoteType.For)) {
-        results.forVotes += weight;
-    } else if (support == uint8(ProposalTypes.VoteType.Against)) {
-        results.againstVotes += weight;
-    } else {
-        results.abstainVotes += weight;
+        results.totalVotes += weight;
+
+        emit VoteCast(msg.sender, proposalId, support, weight, "");
+        emit ProposalTypes.VoteCast(proposalId, msg.sender, ProposalTypes.VoteType(support), weight, bytes32(0));
+
+        return weight;
     }
 
-    results.totalVotes += weight;
+    // GovernorZK.sol
+    // function castVoteAnonymously(
+    //     bytes32 proposalId,
+    //     uint8 support,
+    //     uint256[8] calldata publicSignals,
+    //     uint256[2] calldata a,
+    //     uint256[2][2] calldata b,
+    //     uint256[2] calldata c
+    // ) external validProposal(proposalId) {
+    //     require(block.timestamp >= proposals[proposalId].startTime, "Voting not started");
+    //     require(block.timestamp <= proposals[proposalId].endTime, "Voting ended");
+    //     require(support <= 2, "Invalid vote type");
 
-    emit VoteCast(msg.sender, proposalId, support, weight, "");
-    emit ProposalTypes.VoteCast(proposalId, msg.sender, ProposalTypes.VoteType(support), weight, bytes32(0));
+    //     // Extract nullifier from publicSignals[3]
+    //     uint256 nullifier = publicSignals[3];
+    //     require(!usedNullifiers[bytes32(nullifier)], "Already voted");
+    //     usedNullifiers[bytes32(nullifier)] = true;
 
-    return weight;
-}
+    //     // Verify the proof using the same verifier as deposit
+    //     // bool isValid = zkVerifier.verify(a, b, c, publicSignals);
+    //     // require(isValid, "Invalid ZK proof");
 
-// GovernorZK.sol
-// function castVoteAnonymously(
-//     bytes32 proposalId,
-//     uint8 support,
-//     uint256[8] calldata publicSignals,
-//     uint256[2] calldata a,
-//     uint256[2][2] calldata b,
-//     uint256[2] calldata c
-// ) external validProposal(proposalId) {
-//     require(block.timestamp >= proposals[proposalId].startTime, "Voting not started");
-//     require(block.timestamp <= proposals[proposalId].endTime, "Voting ended");
-//     require(support <= 2, "Invalid vote type");
+    //     // Use amount as voting weight
+    //     uint256 votingPower = publicSignals[0]; // ValueToMint
 
-//     // Extract nullifier from publicSignals[3]
-//     uint256 nullifier = publicSignals[3];
-//     require(!usedNullifiers[bytes32(nullifier)], "Already voted");
-//     usedNullifiers[bytes32(nullifier)] = true;
+    //     ProposalTypes.VotingResults storage results = votingResults[proposalId];
+    //     if (support == uint8(ProposalTypes.VoteType.For)) {
+    //         results.forVotes += votingPower;
+    //     } else if (support == uint8(ProposalTypes.VoteType.Against)) {
+    //         results.againstVotes += votingPower;
+    //     } else {
+    //         results.abstainVotes += votingPower;
+    //     }
+    //     results.totalVotes += votingPower;
 
-//     // Verify the proof using the same verifier as deposit
-//     // bool isValid = zkVerifier.verify(a, b, c, publicSignals);
-//     // require(isValid, "Invalid ZK proof");
-
-//     // Use amount as voting weight
-//     uint256 votingPower = publicSignals[0]; // ValueToMint
-
-//     ProposalTypes.VotingResults storage results = votingResults[proposalId];
-//     if (support == uint8(ProposalTypes.VoteType.For)) {
-//         results.forVotes += votingPower;
-//     } else if (support == uint8(ProposalTypes.VoteType.Against)) {
-//         results.againstVotes += votingPower;
-//     } else {
-//         results.abstainVotes += votingPower;
-//     }
-//     results.totalVotes += votingPower;
-
-//     emit ProposalTypes.VoteCast(proposalId, msg.sender, ProposalTypes.VoteType(support), votingPower, bytes32(nullifier));
-// }
+    //     emit ProposalTypes.VoteCast(proposalId, msg.sender, ProposalTypes.VoteType(support), votingPower, bytes32(nullifier));
+    // }
 
     /// @notice Execute a successful proposal
     function execute(bytes32 proposalId) external override validProposal(proposalId) {

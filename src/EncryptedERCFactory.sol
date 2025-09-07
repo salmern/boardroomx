@@ -1,7 +1,7 @@
 // // SPDX-License-Identifier: MIT
 // pragma solidity ^0.8.30;
 
-// import {EncryptedERC} from "encrypted-erc/src/EncryptedERC.sol"; 
+// import {EncryptedERC} from "encrypted-erc/src/EncryptedERC.sol";
 // import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 
 // contract EncryptedERCFactory {

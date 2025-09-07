@@ -2,7 +2,7 @@
 pragma solidity ^0.8.30;
 
 import "forge-std/Script.sol";
-import {BoardManagement} from "../src/utils/BoardManagement.sol";
+import { BoardManagement } from "../src/utils/BoardManagement.sol";
 
 contract DeployBoardManagement is Script {
     function run() external {
@@ -13,7 +13,7 @@ contract DeployBoardManagement is Script {
         address chairman = vm.envOr("CHAIRMAN_ADDRESS", vm.addr(deployerPrivateKey));
 
         // Load initial members from .env
-       
+
         address member1 = vm.envAddress("MEMBER1");
         address member2 = vm.envAddress("MEMBER2");
 

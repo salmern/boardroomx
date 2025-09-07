@@ -3,7 +3,7 @@ pragma solidity ^0.8.27;
 
 import "forge-std/Script.sol";
 import "../src/GovToken.sol";
-import {EncryptedERC} from "@encrypted-erc/EncryptedERC.sol";
+import { EncryptedERC } from "@encrypted-erc/EncryptedERC.sol";
 
 contract DepositEncryptedERC is Script {
     function run() external {

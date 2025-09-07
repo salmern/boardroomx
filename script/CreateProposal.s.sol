@@ -2,8 +2,8 @@
 pragma solidity ^0.8.27;
 
 import "forge-std/Script.sol";
-import {GovernorZK} from "../src/governance/GovernorZK.sol";
-import {ProposalTypes} from "../src/governance/ProposalTypes.sol";
+import { GovernorZK } from "../src/governance/GovernorZK.sol";
+import { ProposalTypes } from "../src/governance/ProposalTypes.sol";
 
 contract CreateProposal is Script {
     function run() external {
@@ -26,11 +26,11 @@ contract CreateProposal is Script {
         });
 
         ProposalTypes.EncryptedBudget memory budget = ProposalTypes.EncryptedBudget({
-        budgetHash: bytes32(0), // Hash of encrypted budget data
-        encryptedData: "",
-        decryptionKeys: new bytes32[](0), // Keys for threshold decryption
-        isDecrypted: false, // Whether budget has been revealed
-        decryptedContent: ""
+            budgetHash: bytes32(0), // Hash of encrypted budget data
+            encryptedData: "",
+            decryptionKeys: new bytes32[](0), // Keys for threshold decryption
+            isDecrypted: false, // Whether budget has been revealed
+            decryptedContent: ""
         });
 
         bytes memory proposalData = abi.encode(
@@ -42,11 +42,7 @@ contract CreateProposal is Script {
         );
 
         // Call propose()
-        governor.propose(
-            proposalId,
-            "Increase Q3 Marketing Budget by 50 BGT",
-            proposalData
-        );
+        governor.propose(proposalId, "Increase Q3 Marketing Budget by 50 BGT", proposalData);
 
         vm.stopBroadcast();
     }

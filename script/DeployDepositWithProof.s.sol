@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import {EncryptedERC} from "@encrypted-erc/EncryptedERC.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { EncryptedERC } from "@encrypted-erc/EncryptedERC.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract DeployDepositWithProof is Script {
     function run() external {

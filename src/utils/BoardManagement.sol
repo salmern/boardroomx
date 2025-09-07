@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "../interfaces/IGovernanceCore.sol";
 
-
 /// @title BoardManagement - Manages corporate board membership
 /// @notice Handles adding/removing board members and access control
 contract BoardManagement is IBoardManagement {
@@ -13,8 +12,6 @@ contract BoardManagement is IBoardManagement {
 
     uint256 public constant MAX_BOARD_SIZE = 15;
     uint256 public constant MIN_BOARD_SIZE = 3;
-
-    
 
     modifier onlyChairman() {
         require(msg.sender == chairman, "Only chairman can perform this action");
@@ -33,7 +30,7 @@ contract BoardManagement is IBoardManagement {
     }
 
     constructor(address[] memory initialMembers, address _chairman) {
-         if (_chairman == address(0)) {
+        if (_chairman == address(0)) {
             revert("Invalid chairman address");
         }
         if (_boardMembers[_chairman]) {
@@ -97,8 +94,6 @@ contract BoardManagement is IBoardManagement {
         // emit BoardMemberRemoved(oldChairman, block.timestamp);
     }
 
-    
-
     function isBoardMember(address account) external view override returns (bool) {
         return _boardMembers[account];
     }
@@ -140,5 +135,4 @@ contract BoardManagement is IBoardManagement {
     //     // For now, return a simple hash of all board members
     //     return keccak256(abi.encodePacked(_boardMembersList));
     // }
-
 }

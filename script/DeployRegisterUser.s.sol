@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import {Registrar} from "@encrypted-erc/Registrar.sol";
-import {RegisterProof, ProofPoints} from "@encrypted-erc/types/Types.sol";
+import { Registrar } from "@encrypted-erc/Registrar.sol";
+import { RegisterProof, ProofPoints } from "@encrypted-erc/types/Types.sol";
 
 contract DeployRegisterUser is Script {
     function run() external {
@@ -47,10 +47,8 @@ contract DeployRegisterUser is Script {
         ];
 
         // Build the RegisterProof struct
-        RegisterProof memory proof = RegisterProof({
-            proofPoints: ProofPoints({a: a, b: b, c: c}),
-            publicSignals: publicSignals
-        });
+        RegisterProof memory proof =
+            RegisterProof({ proofPoints: ProofPoints({ a: a, b: b, c: c }), publicSignals: publicSignals });
 
         console2.log("Registering user with ZK proof...");
         console2.log("Registrar:", registrarAddress);
