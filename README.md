@@ -19,7 +19,7 @@ This repository represents the **progress update for Round 2** of the Avalanche 
 - **⚡ Avalanche Fuji Deployment**: Deployed on Fuji testnet, leveraging C-Chain's high-throughput for scalable, private transactions.
 - **🗳️ Private Governance**: Built `GovernorZK` contract for private voting and budget proposals using encrypted balances.
 - **📱 Interactive dApp**: Built a React-based frontend that connects to MetaMask, displays on-chain proposals, and simulates private voting.
-- **💸 Real Private Deposit**: Successfully executed a **real deposit** of `0.3 BGT` into `EncryptedERC` on Fuji testnet.
+- **💸 Real Private Deposit**: Successfully executed a **real deposit** of `4 BGT` into `EncryptedERC` on Fuji testnet.
 
 ---
 
