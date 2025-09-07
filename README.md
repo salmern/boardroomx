@@ -136,7 +136,7 @@ Deployed GovernorZK contract with ZK voting and encrypted budget proposals
 Used EncryptedERC (converter mode) for private voting power
 Built React dApp with real on-chain proposals
 Integrated with eERC20 (EncryptedERC) for private token deposits
-- Executed real private deposit: 4 BGT → EncryptedERC (Fuji)
+- Executed real private deposit: 4 BGT → EncryptedERC (Fuji) 
 - Built interactive React frontend with MetaMask integration
 Simulated private voting with ZK eligibility
 Timeline: August 25 – September 7, 2025
@@ -144,16 +144,13 @@ Status: ✅ Done
 
 
 
-Milestone 3: dApp Frontend + Full ZK Integration
-  - Build React-based dApp for private governance  
-  - Enable private proposal creation, voting, and balance decryption  
-  - Connect to Avalanche C-Chain  
-  - Develop custom Circom circuit for anonymous voting  
-  - Enable client-side proof generation for voting and transfers  
-  - Integrate with EncryptedERC SDK  
-  - Timeline: September 7–14, 2025  
-  - Dependencies: ethers.js, EncryptedERC SDK  
-  - Status: 🟡 In Progress  
+
+ Milestone 3: Full ZK Integration (Sep 7–14)
+- Develop a custom Circom circuit for anonymous voting
+- Connect to Avalanche C-Chain  
+- Enable client-side proof generation in frontend/backend
+- Allow private proposal creation with encrypted metadata
+- Status: 🟡 In Progress
 
 
 Milestone 4: Audit & Mainnet 
@@ -175,5 +172,5 @@ Need for private governance
 Adoption path:
 
 1. DAOs → 2. Web3 Funds → 3. Corporate Boards
-We keep the architecture flexible so it can be used as a privacy layer in the future.
+We keep the architecture flexible so it can be used as a privacy layer infra in the future.
 
