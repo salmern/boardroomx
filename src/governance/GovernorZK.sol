@@ -165,14 +165,14 @@ function castVote(bytes32 proposalId, uint8 support)
 //     require(block.timestamp <= proposals[proposalId].endTime, "Voting ended");
 //     require(support <= 2, "Invalid vote type");
 
-//     // Extract nullifier from publicSignals[3] (or wherever it is)
+//     // Extract nullifier from publicSignals[3]
 //     uint256 nullifier = publicSignals[3];
-//     require(!usedNullifiers[nullifier], "Already voted");
-//     usedNullifiers[nullifier] = true;
+//     require(!usedNullifiers[bytes32(nullifier)], "Already voted");
+//     usedNullifiers[bytes32(nullifier)] = true;
 
 //     // Verify the proof using the same verifier as deposit
-//     bool isValid = zkVerifier.verify(a, b, c, publicSignals);
-//     require(isValid, "Invalid ZK proof");
+//     // bool isValid = zkVerifier.verify(a, b, c, publicSignals);
+//     // require(isValid, "Invalid ZK proof");
 
 //     // Use amount as voting weight
 //     uint256 votingPower = publicSignals[0]; // ValueToMint
