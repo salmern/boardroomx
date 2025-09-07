@@ -21,6 +21,7 @@ contract GovTokenPrivacyTest is Test {
     address auditor = address(0x59c2C8Aa563d835F698543D6226c9c01ACf3a866);
 
     function setUp() external {
+        vm.chainId(43113);
         // Deploy verifiers
         RegistrationCircuitGroth16Verifier registrationVerifier = new RegistrationCircuitGroth16Verifier();
         MintCircuitGroth16Verifier mintVerifier = new MintCircuitGroth16Verifier();
