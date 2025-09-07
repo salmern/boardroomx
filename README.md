@@ -141,6 +141,8 @@ Integrated with eERC20 (EncryptedERC) for private token deposits
 Simulated private voting with ZK eligibility
 Timeline: August 25 – September 7, 2025
 Status: ✅ Done
+frontend demo
+https://boardroomx-ns5ftjph5-salmans-projects-6bd0e473.vercel.app/
 
 
 
@@ -150,6 +152,7 @@ Status: ✅ Done
 - Connect to Avalanche C-Chain  
 - Enable client-side proof generation in frontend/backend
 - Allow private proposal creation with encrypted metadata
+- work on frontend App responsiveness UI/UX
 - Status: 🟡 In Progress
 
 
